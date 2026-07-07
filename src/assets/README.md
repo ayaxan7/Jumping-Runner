@@ -1,0 +1,1 @@
+All art and audio are generated procedurally at runtime (src/game/textures.ts, src/utils/audio.ts). Drop replacement PNG/OGG files here and load them in RunnerScene.preload() if you want custom assets.
