@@ -20,17 +20,20 @@ import { HUD } from './components/HUD';
 import { PauseMenu } from './components/PauseMenu';
 import { GameOver } from './components/GameOver';
 import { SettingsPanel } from './components/SettingsPanel';
+import { Leaderboard } from './components/Leaderboard';
 import { CameraView } from './components/CameraView';
 import { useCamera } from './hooks/useCamera';
 import { usePoseDetection } from './hooks/usePoseDetection';
 import { bus } from './utils/eventBus';
 import { audio } from './utils/audio';
+import { saveLeaderboard } from './utils/scoring';
 import type { GameOverPayload, GameState } from './types';
 
 export default function App() {
   const [gameState, setGameState] = useState<GameState>('LOADING');
   const [gameOverPayload, setGameOverPayload] = useState<GameOverPayload | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [leaderboardOpen, setLeaderboardOpen] = useState(false);
 
   const { stream, status: cameraStatus, errorMessage: cameraError, retry } = useCamera(true);
 
@@ -74,10 +77,26 @@ export default function App() {
   // Whether the next countdown should emit ui:start (first run) or ui:restart.
   const pendingStartRef = useRef<'start' | 'restart'>('start');
   const hasRunOnceRef = useRef(false);
+  const collectedCoinsRef = useRef(0);
+
+  // Track coin collection during a run.
+  useEffect(() => {
+    const off = bus.on('game:coin', () => {
+      collectedCoinsRef.current++;
+    });
+    return off;
+  }, []);
 
   // game:over from Phaser.
   useEffect(() => {
     const off = bus.on('game:over', (payload) => {
+      saveLeaderboard({
+        score: payload.score,
+        distance: payload.distance,
+        collected: collectedCoinsRef.current,
+        date: new Date().toISOString()
+      });
+      collectedCoinsRef.current = 0;
       setGameOverPayload(payload);
       setGameState('GAME_OVER');
     });
@@ -119,6 +138,14 @@ export default function App() {
 
   const handleCloseSettings = useCallback(() => {
     setSettingsOpen(false);
+  }, []);
+
+  const handleOpenLeaderboard = useCallback(() => {
+    setLeaderboardOpen(true);
+  }, []);
+
+  const handleCloseLeaderboard = useCallback(() => {
+    setLeaderboardOpen(false);
   }, []);
 
   const handleRestart = useCallback(() => {
@@ -188,11 +215,14 @@ export default function App() {
 
       {settingsOpen && <SettingsPanel onClose={handleCloseSettings} />}
 
-      {gameState === 'GAME_OVER' && gameOverPayload && (
+      {leaderboardOpen && <Leaderboard onClose={handleCloseLeaderboard} />}
+
+      {gameState === 'GAME_OVER' && gameOverPayload && !leaderboardOpen && (
         <GameOver
           result={gameOverPayload}
           onRestart={handleRestart}
           onRecalibrate={handleRecalibrate}
+          onLeaderboard={handleOpenLeaderboard}
         />
       )}
     </div>

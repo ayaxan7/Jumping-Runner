@@ -9,14 +9,15 @@ interface GameOverProps {
   result: GameOverPayload;
   onRestart: () => void;
   onRecalibrate: () => void;
+  onLeaderboard: () => void;
 }
 
-export function GameOver({ result, onRestart, onRecalibrate }: GameOverProps) {
+export function GameOver({ result, onRestart, onRecalibrate, onLeaderboard }: GameOverProps) {
   return (
     <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="gameover-title">
       <div className="card card--gameover">
         <h2 id="gameover-title" className="card__title">Game over</h2>
-        {result.isNewHighScore && <div className="badge-new">New high score! 🎉</div>}
+        {result.isNewHighScore && <div className="badge-new">New high score!</div>}
         <div className="result-grid">
           <div className="result">
             <span className="result__label">Final score</span>
@@ -33,6 +34,9 @@ export function GameOver({ result, onRestart, onRecalibrate }: GameOverProps) {
         </div>
         <button className="btn btn--primary" onClick={onRestart} autoFocus>
           Run again
+        </button>
+        <button className="btn btn--ghost" onClick={onLeaderboard}>
+          Leaderboard
         </button>
         <button className="btn btn--ghost" onClick={onRecalibrate}>
           Recalibrate camera

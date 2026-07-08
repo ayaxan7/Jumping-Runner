@@ -89,4 +89,46 @@ export function saveConfig(config: SavedConfig): void {
   }
 }
 
+const LEADERBOARD_KEY = 'jump-runner:leaderboard';
+const MAX_LEADERBOARD = 5;
+
+export interface LeaderboardEntry {
+  score: number;
+  distance: number;
+  collected: number;
+  date: string;
+}
+
+export function loadLeaderboard(): LeaderboardEntry[] {
+  try {
+    const raw = localStorage.getItem(LEADERBOARD_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as LeaderboardEntry[];
+    return Array.isArray(parsed) ? parsed.slice(0, MAX_LEADERBOARD) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveLeaderboard(entry: LeaderboardEntry): LeaderboardEntry[] {
+  const entries = loadLeaderboard();
+  entries.push(entry);
+  entries.sort((a, b) => b.score - a.score);
+  const top = entries.slice(0, MAX_LEADERBOARD);
+  try {
+    localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(top));
+  } catch {
+    /* non-fatal */
+  }
+  return top;
+}
+
+export function clearLeaderboard(): void {
+  try {
+    localStorage.removeItem(LEADERBOARD_KEY);
+  } catch {
+    /* non-fatal */
+  }
+}
+
 
