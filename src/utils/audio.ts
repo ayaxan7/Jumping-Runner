@@ -9,7 +9,7 @@
 import { bus } from './eventBus';
 import { loadMuted, saveMuted } from './scoring';
 
-type SfxName = 'jump' | 'collision' | 'milestone' | 'gameover' | 'countdown' | 'calibrated';
+type SfxName = 'jump' | 'collision' | 'milestone' | 'gameover' | 'countdown' | 'calibrated' | 'collect';
 
 class AudioEngine {
   private ctx: AudioContext | null = null;
@@ -128,6 +128,10 @@ class AudioEngine {
         this.tone(523, 0.1, { type: 'triangle', volume: 0.22 });
         this.tone(659, 0.1, { type: 'triangle', volume: 0.22, delay: 0.1 });
         this.tone(784, 0.18, { type: 'triangle', volume: 0.22, delay: 0.2 });
+        break;
+      case 'collect':
+        this.tone(988, 0.08, { volume: 0.18 });
+        this.tone(1319, 0.14, { volume: 0.18, delay: 0.07 });
         break;
       case 'gameover':
         this.tone(440, 0.18, { type: 'triangle', volume: 0.25 });

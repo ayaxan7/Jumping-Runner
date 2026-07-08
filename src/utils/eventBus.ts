@@ -22,6 +22,8 @@ interface EventMap {
   /** Fired by the game scene roughly every 100 ms. */
   'game:score': { score: number; distance: number; speed: number };
   'game:over': GameOverPayload;
+  /** Fired when a coin is collected. */
+  'game:coin': void;
   /** UI commands. */
   'ui:pause': void;
   'ui:resume': void;

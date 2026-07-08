@@ -14,7 +14,9 @@ export const SCORING = {
   /** Points per 100 px of distance. */
   POINTS_PER_100PX: 1,
   /** A milestone chime plays every time the score crosses a multiple of this. */
-  MILESTONE: 250
+  MILESTONE: 250,
+  /** Bonus points awarded per coin collected. */
+  COIN_BONUS: 50
 } as const;
 
 export function computeScore(elapsedSeconds: number, distancePx: number): number {

@@ -10,6 +10,7 @@ import Phaser from 'phaser';
 import { createAllTextures, PALETTE } from './textures';
 import { PlayerController } from './PlayerController';
 import { ObstacleManager } from './ObstacleManager';
+import { CollectibleManager } from './CollectibleManager';
 import { PHYSICS, WORLD, clamp } from '../utils/physics';
 import { computeScore, loadHighScore, saveHighScore, SCORING } from '../utils/scoring';
 import { audio } from '../utils/audio';
@@ -18,6 +19,7 @@ import { bus } from '../utils/eventBus';
 export class RunnerScene extends Phaser.Scene {
   private player!: PlayerController;
   private obstacles!: ObstacleManager;
+  private collectibles!: CollectibleManager;
   private clouds!: Phaser.GameObjects.TileSprite;
   private mountains!: Phaser.GameObjects.TileSprite;
   private treeline!: Phaser.GameObjects.TileSprite;
@@ -43,6 +45,7 @@ export class RunnerScene extends Phaser.Scene {
 
     this.player = new PlayerController(this);
     this.obstacles = new ObstacleManager(this);
+    this.collectibles = new CollectibleManager(this);
 
     // Invisible static floor.
     const groundY = WORLD.HEIGHT - WORLD.GROUND_HEIGHT;
@@ -53,6 +56,11 @@ export class RunnerScene extends Phaser.Scene {
     this.physics.add.overlap(this.player.sprite, this.obstacles.group, (_p, o) => {
       const obs = o as Phaser.Physics.Arcade.Sprite;
       if (obs.active) this.handleDeath();
+    });
+
+    this.physics.add.overlap(this.player.sprite, this.collectibles.group, (_p, c) => {
+      const coin = c as Phaser.Physics.Arcade.Sprite;
+      if (coin.active) this.collectibles.collect(coin);
     });
 
     this.wireBus();
@@ -150,6 +158,7 @@ export class RunnerScene extends Phaser.Scene {
     this.lastMilestone = 0;
     this.player.reset();
     this.obstacles.reset();
+    this.collectibles.reset();
     this.physics.resume();
     this.cameras.main.resetFX();
   }
@@ -232,6 +241,7 @@ export class RunnerScene extends Phaser.Scene {
     this.ground.tilePositionX += scroll;
 
     this.obstacles.update(delta, this.speed);
+    this.collectibles.update(delta, this.speed);
     this.player.update();
 
     // Throttled score broadcast (~10 Hz) keeps React renders cheap.

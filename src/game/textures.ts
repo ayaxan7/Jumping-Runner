@@ -54,7 +54,10 @@ export const PALETTE = {
   spike: 0xaab2bd,
   spikeDark: 0x7f8893,
   pit: 0x231510,
-  pitEdge: 0x4a2f1c
+  pitEdge: 0x4a2f1c,
+  // Collectibles
+  coin: 0xffd700,
+  coinDark: 0xdaa520
 } as const;
 
 /** Entry point — call once from the scene's create(). */
@@ -66,6 +69,8 @@ export function createAllTextures(scene: Phaser.Scene): void {
   createTreeline(scene);
   createGround(scene);
   createRunnerFrames(scene);
+  createCoin(scene);
+  createCoinParticle(scene);
   createObstacles(scene);
 }
 
@@ -291,6 +296,32 @@ function drawRunner(g: Phaser.GameObjects.Graphics, pose: RunnerPose): void {
     g.arc(cx + 7, bodyTop - 4, 4, 0.15 * Math.PI, 0.7 * Math.PI);
     g.strokePath();
   }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Collectibles                                                            */
+/* ---------------------------------------------------------------------- */
+
+function createCoin(scene: Phaser.Scene): void {
+  const g = scene.add.graphics();
+  g.fillStyle(PALETTE.coin, 1);
+  g.fillCircle(14, 14, 12);
+  g.fillStyle(PALETTE.coinDark, 1);
+  g.fillCircle(14, 14, 9);
+  g.fillStyle(PALETTE.coin, 1);
+  g.fillRect(10, 6, 8, 16);
+  g.fillStyle(0xfff5cc, 0.6);
+  g.fillCircle(10, 10, 3);
+  g.generateTexture('coin', 28, 28);
+  g.destroy();
+}
+
+function createCoinParticle(scene: Phaser.Scene): void {
+  const g = scene.add.graphics();
+  g.fillStyle(0xffd700, 1);
+  g.fillCircle(4, 4, 4);
+  g.generateTexture('coin_particle', 8, 8);
+  g.destroy();
 }
 
 /* ---------------------------------------------------------------------- */
