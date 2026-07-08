@@ -71,6 +71,7 @@ export function createAllTextures(scene: Phaser.Scene): void {
   createRunnerFrames(scene);
   createCoin(scene);
   createCoinParticle(scene);
+  createGroundDetail(scene);
   createObstacles(scene);
 }
 
@@ -321,6 +322,34 @@ function createCoinParticle(scene: Phaser.Scene): void {
   g.fillStyle(0xffd700, 1);
   g.fillCircle(4, 4, 4);
   g.generateTexture('coin_particle', 8, 8);
+  g.destroy();
+}
+
+function createGroundDetail(scene: Phaser.Scene): void {
+  const W = 240;
+  const H = 32;
+  const g = scene.add.graphics();
+  const flowers = [
+    { x: 20, color: 0xff6b8a },
+    { x: 70, color: 0xffeb6b },
+    { x: 130, color: 0xff9f6b },
+    { x: 180, color: 0xff6b8a },
+  ];
+  flowers.forEach((f) => {
+    g.fillStyle(0x58b24a, 1);
+    g.fillRect(f.x, 16, 2, 14);
+    g.fillStyle(f.color, 1);
+    g.fillCircle(f.x, 16, 4);
+    g.fillCircle(f.x - 3, 18, 3);
+    g.fillCircle(f.x + 3, 18, 3);
+  });
+  g.fillStyle(PALETTE.stone, 1);
+  g.fillEllipse(45, 24, 10, 6);
+  g.fillEllipse(110, 26, 8, 5);
+  g.fillEllipse(200, 23, 12, 7);
+  g.fillStyle(PALETTE.stoneDark, 1);
+  g.fillEllipse(155, 25, 6, 4);
+  g.generateTexture('ground_detail', W, H);
   g.destroy();
 }
 

@@ -20,6 +20,7 @@ export class RunnerScene extends Phaser.Scene {
   private player!: PlayerController;
   private obstacles!: ObstacleManager;
   private collectibles!: CollectibleManager;
+  private groundDetail!: Phaser.GameObjects.TileSprite;
   private clouds!: Phaser.GameObjects.TileSprite;
   private mountains!: Phaser.GameObjects.TileSprite;
   private treeline!: Phaser.GameObjects.TileSprite;
@@ -110,6 +111,11 @@ export class RunnerScene extends Phaser.Scene {
       .tileSprite(0, WORLD.HEIGHT - WORLD.GROUND_HEIGHT, WORLD.WIDTH, WORLD.GROUND_HEIGHT, 'ground')
       .setOrigin(0, 0)
       .setDepth(7);
+
+    this.groundDetail = this.add
+      .tileSprite(0, WORLD.HEIGHT - WORLD.GROUND_HEIGHT - 28, WORLD.WIDTH, 32, 'ground_detail')
+      .setOrigin(0, 0)
+      .setDepth(6);
   }
 
   /* ------------------------------------------------------------------ */
@@ -239,6 +245,7 @@ export class RunnerScene extends Phaser.Scene {
     this.mountains.tilePositionX += scroll * 0.12;
     this.treeline.tilePositionX += scroll * 0.35;
     this.ground.tilePositionX += scroll;
+    this.groundDetail.tilePositionX += scroll * 0.9;
 
     this.obstacles.update(delta, this.speed);
     this.collectibles.update(delta, this.speed);
