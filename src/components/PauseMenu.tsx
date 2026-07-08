@@ -8,11 +8,10 @@ import { audio } from '../utils/audio';
 interface PauseMenuProps {
   onResume: () => void;
   onRestart: () => void;
+  onSettings: () => void;
 }
 
-export function PauseMenu({ onResume, onRestart }: PauseMenuProps) {
-  const [muted, setMuted] = useState(audio.isMuted);
-
+export function PauseMenu({ onResume, onRestart, onSettings }: PauseMenuProps) {
   return (
     <div className="overlay" role="dialog" aria-modal="true" aria-labelledby="pause-title">
       <div className="card">
@@ -24,8 +23,8 @@ export function PauseMenu({ onResume, onRestart }: PauseMenuProps) {
         <button className="btn btn--ghost" onClick={onRestart}>
           Restart run
         </button>
-        <button className="btn btn--ghost" onClick={() => setMuted(audio.toggleMute())}>
-          {muted ? 'Unmute sound' : 'Mute sound'}
+        <button className="btn btn--ghost" onClick={onSettings}>
+          Settings
         </button>
       </div>
     </div>

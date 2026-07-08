@@ -63,3 +63,30 @@ export function saveMuted(muted: boolean): void {
     /* non-fatal */
   }
 }
+
+const CONFIG_KEY = 'jump-runner:config';
+
+export interface SavedConfig {
+  jumpThreshold: number;
+  keyboardMode: boolean;
+}
+
+export function loadConfig(): SavedConfig {
+  try {
+    const raw = localStorage.getItem(CONFIG_KEY);
+    if (!raw) return { jumpThreshold: 0.2, keyboardMode: false };
+    return JSON.parse(raw) as SavedConfig;
+  } catch {
+    return { jumpThreshold: 0.2, keyboardMode: false };
+  }
+}
+
+export function saveConfig(config: SavedConfig): void {
+  try {
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+  } catch {
+    /* non-fatal */
+  }
+}
+
+

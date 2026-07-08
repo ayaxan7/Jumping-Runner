@@ -19,6 +19,7 @@ import { Countdown } from './components/Countdown';
 import { HUD } from './components/HUD';
 import { PauseMenu } from './components/PauseMenu';
 import { GameOver } from './components/GameOver';
+import { SettingsPanel } from './components/SettingsPanel';
 import { CameraView } from './components/CameraView';
 import { useCamera } from './hooks/useCamera';
 import { usePoseDetection } from './hooks/usePoseDetection';
@@ -29,6 +30,7 @@ import type { GameOverPayload, GameState } from './types';
 export default function App() {
   const [gameState, setGameState] = useState<GameState>('LOADING');
   const [gameOverPayload, setGameOverPayload] = useState<GameOverPayload | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const { stream, status: cameraStatus, errorMessage: cameraError, retry } = useCamera(true);
 
@@ -111,6 +113,14 @@ export default function App() {
     setGameState('RUNNING');
   }, []);
 
+  const handleOpenSettings = useCallback(() => {
+    setSettingsOpen(true);
+  }, []);
+
+  const handleCloseSettings = useCallback(() => {
+    setSettingsOpen(false);
+  }, []);
+
   const handleRestart = useCallback(() => {
     setGameOverPayload(null);
     jumpDetector.reset();
@@ -172,7 +182,11 @@ export default function App() {
 
       {gameState === 'READY' && <Countdown onDone={handleCountdownDone} />}
 
-      {gameState === 'PAUSED' && <PauseMenu onResume={handleResume} onRestart={handleRestart} />}
+      {gameState === 'PAUSED' && !settingsOpen && (
+        <PauseMenu onResume={handleResume} onRestart={handleRestart} onSettings={handleOpenSettings} />
+      )}
+
+      {settingsOpen && <SettingsPanel onClose={handleCloseSettings} />}
 
       {gameState === 'GAME_OVER' && gameOverPayload && (
         <GameOver
